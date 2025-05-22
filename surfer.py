@@ -10,7 +10,7 @@
 import undetected_chromedriver as uc
 from selenium import webdriver
 
-import check_url_dict from config
+from config import check_url_dict
 from live_nation_nav import run_livenation_min_price_check
 from ticketmaster_nav import run_ticketmaster_min_price_check
 

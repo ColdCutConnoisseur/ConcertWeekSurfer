@@ -32,11 +32,10 @@ check_url_dict = {
          "Zac Brown Band - Fri Show" : {
              "url" : "https://concerts.livenation.com/zac-brown-band-gilford-new-hampshire-05-30-2025/event/0100623C8D0F2725?refArtist=K8vZ9175zn0&f_simplified_filter=true&f_enable_merch_slot=true",
              "ga_price" : 105.30
-
-         }
+         },
 
          "Shakira" : {
-             "url" : "https://mlb.tickets.com/?agency=RSXV_CONCERTS_MPV&orgid=46849&pid=9479166&tfl=Boston_Red_Sox-Tickets-Shakira-button-x0-Desktop-Landscape&adobe_mc=MCMID=11293665953125414173451035733298702975&MCORGID=A65F776A5245B01B0A490D44%40AdobeOrg&TS=1747857008&partnerId=redirect-bos-shakira&_gl=1*1hdzx29*_gcl_au*MTM3NTIwOTczOS4xNzQ3ODU3MDE1#/event/9479166/ticketlist/?view=sections&minPrice=111.75&maxPrice=254.75&quantity=2&sort=price_desc&ada=false&seatSelection=false&onlyCoupon=true&onlyVoucher=false"
+             "url" : "https://mlb.tickets.com/?tfl=Boston_Red_Sox-Tickets-Shakira-button-x0-Desktop-Landscape&adobe_mc=MCMID%3D90771071040236370709188975820124854292&MCORGID=A65F776A5245B01B0A490D44%40AdobeOrg&TS=1747934949&partnerId=redirect-bos-shakira&_gl=1*1uhdlzc*_gcl_au*MTM3NTIwOTczOS4xNzQ3ODU3MDE1&agency=RSXV_CONCERTS_MPV&orgid=46849&eventId=14799&salesGroupId=2680&salesGroupOfferCode=SUMMER#/event/E14799/ticketlist/?view=sections&minPrice=0&maxPrice=0&quantity=2&sort=price_desc&ada=false&seatSelection=false&onlyCoupon=true&onlyVoucher=false",
              "ga_price" : 77.50
          },
 
