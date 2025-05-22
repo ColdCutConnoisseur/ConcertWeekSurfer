@@ -26,7 +26,7 @@ class NoDriverException(Exception):
 
 def categorize_url_slug(full_url: str) -> str:
     tm = "www.ticketmaster.com"
-    ln = "www.livenation.com"
+    ln = "concerts.livenation.com"
 
     if tm in full_url:
         return "ticketmaster"

@@ -13,6 +13,7 @@ from utils import price_cleanup
 def run_livenation_min_price_check(driver: webdriver, url_to_visit: str) -> float:
     driver.get(url_to_visit)
 
+    test_wait = WebDriverWait(driver, 120)
     wait = WebDriverWait(driver, 10)
     wait.until(EC.url_to_be(url_to_visit))
 
@@ -22,7 +23,7 @@ def run_livenation_min_price_check(driver: webdriver, url_to_visit: str) -> floa
     # NOTE: Maybe this can be skipped altogether
 
     # Find the ticket box element
-    box_element = wait.until(EC.presence_of_element_located((By.ID, "quickpicks-listings")))
+    box_element = test_wait.until(EC.presence_of_element_located((By.ID, "quickpicks-listings")))
 
     print("Box element located.")
 
