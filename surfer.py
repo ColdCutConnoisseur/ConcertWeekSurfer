@@ -1,11 +1,18 @@
-"""Main"""
+"""Main Price Check Runner
+
+   1. Read config for which artists/events to price check.
+   2. Categorize each event url as either TM or LN parent site.
+   3. Run related price check func for particular website.
+   4. Alert on ticket deals ($30 tickets)
+"""
 
 
 import undetected_chromedriver as uc
 from selenium import webdriver
 
-
-
+import check_url_dict from config
+from live_nation_nav import run_livenation_min_price_check
+from ticketmaster_nav import run_ticketmaster_min_price_check
 
 
 class DriverType:
@@ -16,6 +23,20 @@ class DriverType:
 class NoDriverException(Exception):
     pass
 
+
+def categorize_url_slug(full_url: str) -> str:
+    tm = "www.ticketmaster.com"
+    ln = "www.livenation.com"
+
+    if tm in full_url:
+        return "ticketmaster"
+
+    elif ln in full_url:
+        return "livenation"
+
+    else:
+        print("Unable to categorize url!")
+        return None
 
 
 def create_and_return_driver(driver_type: DriverType) -> webdriver:
@@ -44,6 +65,27 @@ def check_current_prices():
     """Main loop"""
     # Setup driver
     driver = create_and_return_driver(driver_type=DriverType.UDC)
+
+    # Iterate thru configured events
+    for artist, attribs in check_url_dict.items():
+        print(f"Running price check for {artist}...")
+
+        # Fork : Should run tm or ln functionality?
+        event_url = attribs["url"]
+        website = categorize_url_slug(event_url)
+
+        print(f"Url categorized as {website}.")
+
+        if website == "ticketmaster":
+            pass
+
+        elif website == "livenation":
+            pass
+
+        elif website is None:
+            print("Unable to categorize website as TM or LN!  Skipping...")
+            continue
+            
 
 
 
