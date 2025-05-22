@@ -64,28 +64,37 @@ def create_and_return_driver(driver_type: DriverType) -> webdriver:
 def check_current_prices():
     """Main loop"""
     # Setup driver
+    # NOTE: Alternative is that there is a driver context manager in Selenium now
     driver = create_and_return_driver(driver_type=DriverType.UDC)
 
-    # Iterate thru configured events
-    for artist, attribs in check_url_dict.items():
-        print(f"Running price check for {artist}...")
 
-        # Fork : Should run tm or ln functionality?
-        event_url = attribs["url"]
-        website = categorize_url_slug(event_url)
+    try:
+        # Iterate thru configured events
+        for artist, attribs in check_url_dict.items():
+            print(f"Running price check for {artist}...")
 
-        print(f"Url categorized as {website}.")
+            # Fork : Should run tm or ln functionality?
+            event_url = attribs["url"]
+            website = categorize_url_slug(event_url)
 
-        if website == "ticketmaster":
-            pass
+            print(f"Url categorized as {website}.")
 
-        elif website == "livenation":
-            pass
+            if website == "ticketmaster":
+                pass
 
-        elif website is None:
-            print("Unable to categorize website as TM or LN!  Skipping...")
-            continue
+            elif website == "livenation":
+                min_price = run_livenation_min_price_check(driver, event_url)
+                print(min_price)
+
+            elif website is None:
+                print("Unable to categorize website as TM or LN!  Skipping...")
+                continue
             
+    finally:
+        driver.quit()
 
 
 
+
+if __name__ == "__main__":
+    check_current_prices()
