@@ -6,14 +6,21 @@
    4. Alert on ticket deals ($30 tickets)
 """
 
+import os
+import time
+import random
+import tempfile
 
 import undetected_chromedriver as uc
 from selenium import webdriver
+from dotenv import load_dotenv
 
 from config import check_url_dict
 from live_nation_nav import run_livenation_min_price_check
 from ticketmaster_nav import run_ticketmaster_min_price_check
 
+
+load_dotenv()
 
 class DriverType:
     CHROME = "chrome"
@@ -46,10 +53,17 @@ def create_and_return_driver(driver_type: DriverType) -> webdriver:
 
     elif driver_type is DriverType.UDC:
         print("Running with UDC driver.")
+
+        #profile_path = os.environ["CHROME_PP"]
+        profile_dir = tempfile.mkdtemp(dir="./chrome_profile")
+
         options = uc.ChromeOptions()
-        #options.add_argument("--headless")  # optional
+
+        options.add_argument(f"--user-data-dir={profile_dir}")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-blink-features=AutomationControlled")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--start-maximized")
         return uc.Chrome(options=options)
 
     elif driver_type is DriverType.FIREFOX:
@@ -71,6 +85,9 @@ def check_current_prices():
     try:
         # Iterate thru configured events
         for artist, attribs in check_url_dict.items():
+            
+            time.sleep(random.randint(10, 20))
+
             print(f"Running price check for {artist}...")
 
             # Fork : Should run tm or ln functionality?
@@ -80,11 +97,12 @@ def check_current_prices():
             print(f"Url categorized as {website}.")
 
             if website == "ticketmaster":
-                pass
+                min_price = run_ticketmaster_min_price_check(driver, event_url)
 
             elif website == "livenation":
-                min_price = run_livenation_min_price_check(driver, event_url)
-                print(min_price)
+                #min_price = run_livenation_min_price_check(driver, event_url)
+                #print(min_price)
+                pass
 
             elif website is None:
                 print("Unable to categorize website as TM or LN!  Skipping...")
