@@ -54,4 +54,9 @@ check_url_dict = {
              "ga_price" : 62.70
          },
 
+         "My Morning Jacket" : {
+             "url" : "https://concerts.livenation.com/my-morning-jacket-is-on-tour-bend-oregon-08-05-2025/event/0F006254C94A477D",
+             "ga_price" : 67.20
+         }
+
 }
