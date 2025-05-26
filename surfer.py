@@ -14,6 +14,7 @@ import tempfile
 
 import undetected_chromedriver as uc
 from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
 from dotenv import load_dotenv
 
 from config import check_url_dict
@@ -90,7 +91,7 @@ def visit_cw_home_page(driver: webdriver):
 def check_current_prices(use_driver_type: DriverType):
     """Main loop"""
     # Setup driver
-    # NOTE: Alternative is that there is a driver context manager in Selenium now
+    # NOTE: There is a driver context manager in Selenium now, just FYI
     driver = create_and_return_driver(driver_type=use_driver_type)
 
     try:
@@ -111,17 +112,26 @@ def check_current_prices(use_driver_type: DriverType):
 
             print(f"Url categorized as {website}.")
 
-            if website == "ticketmaster":
-                #min_price = run_ticketmaster_min_price_check(driver, event_url)
-                pass
+            # Catch one-off site structure early on with TimeoutExceptions
+            try:
+                if website == "ticketmaster":
+                    min_price = run_ticketmaster_min_price_check(driver, event_url)
+                    print(min_price)
+                    visit_cw_home_page(driver)
 
-            elif website == "livenation":
-                min_price = run_livenation_min_price_check(driver, event_url)
-                print(min_price)
-                raise EarlyExitException
+                elif website == "livenation":
+                    min_price = run_livenation_min_price_check(driver, event_url)
+                    print(min_price)
+                    visit_cw_home_page(driver)
 
-            elif website is None:
-                print("Unable to categorize website as TM or LN!  Skipping...")
+                elif website is None:
+                    print("Unable to categorize website as TM or LN!  Skipping...\n")
+                    print(f"Link: {event_url}")
+                    continue
+
+            except TimeoutException:
+                print("TimeoutException raised and caught in main loop.")
+                print("Continuing...")
                 continue
             
     finally:
@@ -132,3 +142,10 @@ def check_current_prices(use_driver_type: DriverType):
 
 if __name__ == "__main__":
     check_current_prices(use_driver_type=DriverType.FIREFOX)
+
+
+
+
+
+
+
