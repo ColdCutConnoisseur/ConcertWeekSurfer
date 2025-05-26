@@ -7,6 +7,7 @@
 """
 
 import os
+import sys
 import time
 import random
 import tempfile
@@ -28,6 +29,9 @@ class DriverType:
     FIREFOX = "firefox"
 
 class NoDriverException(Exception):
+    pass
+
+class EarlyExitException(Exception):
     pass
 
 
@@ -74,15 +78,26 @@ def create_and_return_driver(driver_type: DriverType) -> webdriver:
         print(f"Following driver type not recognized: {driver_type}")
         raise NoDriverException
 
+def visit_cw_home_page(driver: webdriver):
+    concert_week_home_url = "https://www.livenation.com/promotion/tickettosummer?locationmode=default-all"
 
-def check_current_prices():
+    driver.get(concert_week_home_url)
+
+    time.sleep(20)
+
+    return 0
+
+def check_current_prices(use_driver_type: DriverType):
     """Main loop"""
     # Setup driver
     # NOTE: Alternative is that there is a driver context manager in Selenium now
-    driver = create_and_return_driver(driver_type=DriverType.UDC)
-
+    driver = create_and_return_driver(driver_type=use_driver_type)
 
     try:
+        
+        # Emulate natural visit for cookies, tokens, etc
+        visit_cw_home_page(driver)
+
         # Iterate thru configured events
         for artist, attribs in check_url_dict.items():
             
@@ -97,12 +112,13 @@ def check_current_prices():
             print(f"Url categorized as {website}.")
 
             if website == "ticketmaster":
-                min_price = run_ticketmaster_min_price_check(driver, event_url)
+                #min_price = run_ticketmaster_min_price_check(driver, event_url)
+                pass
 
             elif website == "livenation":
-                #min_price = run_livenation_min_price_check(driver, event_url)
-                #print(min_price)
-                pass
+                min_price = run_livenation_min_price_check(driver, event_url)
+                print(min_price)
+                raise EarlyExitException
 
             elif website is None:
                 print("Unable to categorize website as TM or LN!  Skipping...")
@@ -115,4 +131,4 @@ def check_current_prices():
 
 
 if __name__ == "__main__":
-    check_current_prices()
+    check_current_prices(use_driver_type=DriverType.FIREFOX)
