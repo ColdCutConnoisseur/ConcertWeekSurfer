@@ -82,7 +82,7 @@ def create_and_return_driver(driver_type: DriverType) -> webdriver:
 def visit_cw_home_page(driver: webdriver):
     concert_week_home_url = "https://www.livenation.com/promotion/tickettosummer?locationmode=default-all"
     driver.get(concert_week_home_url)
-    time.sleep(5)
+    time.sleep(random.randint(4, 7))
     return 0
 
 def check_current_prices(use_driver_type: DriverType):
@@ -99,7 +99,7 @@ def check_current_prices(use_driver_type: DriverType):
         # Iterate thru configured events
         for artist, attribs in check_url_dict.items():
             
-            time.sleep(random.randint(10, 20))
+            time.sleep(random.randint(4, 14))
 
             print(f"Running price check for {artist}...")
 

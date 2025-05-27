@@ -79,7 +79,7 @@ def route_event_and_get_price(driver: webdriver, url_to_route: str, wait_object:
 def run_ticketmaster_min_price_check(driver: webdriver, url_to_visit: str) -> float:
     driver.get(url_to_visit)
 
-    normal_wait = WebDriverWait(driver, 25)
+    normal_wait = WebDriverWait(driver, 30)
     arrive_wait = WebDriverWait(driver, 10)
     
     arrive_wait.until(EC.url_to_be(url_to_visit))

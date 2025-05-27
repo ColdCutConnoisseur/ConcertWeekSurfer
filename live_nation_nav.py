@@ -13,14 +13,15 @@ from utils import price_cleanup, retry_call_until_text_is_avail
 def run_livenation_min_price_check(driver: webdriver, url_to_visit: str) -> float:
     driver.get(url_to_visit)
 
-    test_wait = WebDriverWait(driver, 120)
-    wait = WebDriverWait(driver, 10)
-    wait.until(EC.url_to_be(url_to_visit))
+    normal_wait = WebDriverWait(driver, 30)
+    arrive_wait = WebDriverWait(driver, 10)
+
+    arrive_wait.until(EC.url_to_be(url_to_visit))
 
     print("Successfully visited page.")
 
     # Find the ticket box element
-    box_element = test_wait.until(EC.presence_of_element_located((By.ID, "quickpicks-listings")))
+    box_element = normal_wait.until(EC.presence_of_element_located((By.ID, "quickpicks-listings")))
 
     print("Box element located.")
 
