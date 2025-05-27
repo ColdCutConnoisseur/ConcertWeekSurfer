@@ -1,5 +1,7 @@
 """This will house TM functionality"""
 
+import time
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -7,8 +9,32 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-from utils import price_cleanup, alert_user, element_has_text
+from utils import price_cleanup, alert_user, retry_call_until_text_is_avail
 
+
+def retry_call_until_text_is_avail(element, grab_attrib=False, attrib_tag=None):
+    # TODO:  This can be replaced with something way cleaner; I'm just trying to get this workflow going at this point
+    max_retries = 10
+    timeout = 2
+    retries = 0
+
+    while True:
+        if retries >= max_retries:
+            print("Max timeout hit.")
+            return None
+
+        time.sleep(timeout)
+
+        if grab_attrib:
+            fetched = element.get_attribute(attrib_tag)
+
+        else:
+            fetched = element.text.strip()
+
+        if fetched is not None:
+            return fetched
+
+        retries += 1
 
 def run_subtotal_logic_for_price(driver: webdriver, url: str, wait_object: WebDriverWait):
     # NOTE: Let's run two checks and they both have to pass
@@ -20,15 +46,13 @@ def run_subtotal_logic_for_price(driver: webdriver, url: str, wait_object: WebDr
 
     price_element = price_box.find_element(By.XPATH, "following-sibling::span")
 
-    # Wait until the text of the span is not empty
-    WebDriverWait(driver, 10).until(
-        lambda d: price_element.text.strip() != ""
-    )
-
-    # Now safely grab the text
+    # This may return None, so we'll have to check
     raw_price = price_element.text.strip()
 
-    raw_price = price_element.text
+    if raw_price is None:
+        print("Raw price is None.  Retrying...")
+        raw_price = retry_call_until_text_is_avail(price_element)
+        print(f"Fetched price: {raw_price}")
 
     # 2) Because the above price check might keep referencing the same element, and a new element is added for cheaper tickets,
     #   let's also assert that the len of <li> elements is what we're expecting / hasn't changed
@@ -49,9 +73,7 @@ def route_event_and_get_price(driver: webdriver, url_to_route: str, wait_object:
     # One-off cases
     if "sierra-ferrell-shoot-for-the-moon-north-charleston" in url_to_route:
         raw_price = run_subtotal_logic_for_price(driver, url_to_route, wait_object)
-
         formatted_price = price_cleanup(raw_price)
-
         return formatted_price
 
     # Normal flow of operations
@@ -62,26 +84,15 @@ def route_event_and_get_price(driver: webdriver, url_to_route: str, wait_object:
 
         print("Box element located.")
 
-        """ Replaced by fancy GPT below
-        # Now grab first element of this ticket box - NOTE: Should be cheapest, but this should also be asserted (when you have time)
-        first_li = box_element.find_element(By.CSS_SELECTOR, "ul > li")
+        # Now grab second element of this ticket box (first is a header or something) - NOTE: Should be cheapest, but this should also be asserted (when you have time)
+        second_li = box_element.find_element(By.CSS_SELECTOR, "ul > li:nth-of-type(2)")
 
-        # Then grab the data-price attribute of the first <li> element
-        raw_price = first_li.get_attribute('data-price')
-        """
-
-        first_li = WebDriverWait(box_element, 10).until(
-            lambda d: box_element.find_element(By.CSS_SELECTOR, "ul > li")
-        )
-
-        # 2. Wait until that <li> has non-empty text (or use .textContent if necessary)
-        WebDriverWait(driver, 10).until(
-            lambda d: first_li.text.strip() != ""
-        )
-
-        # 3. Now it’s safe to get the price attribute or display text
-        raw_price = first_li.get_attribute("data-price")
-
+        # Then grab the data-price attribute of the second <li> element
+        raw_price = second_li.get_attribute('data-price')
+        
+        if raw_price is None:
+            raw_price = retry_call_until_text_is_avail(second_li, grab_attrib=True, attrib_tag="data-price")
+        
         formatted_price = price_cleanup(raw_price)
 
         return formatted_price
@@ -98,6 +109,13 @@ def run_ticketmaster_min_price_check(driver: webdriver, url_to_visit: str) -> fl
 
     print("Successfuly visited page.")
 
-    route_event_and_get_price(driver, url_to_visit, normal_wait)
+    formatted_price = route_event_and_get_price(driver, url_to_visit, normal_wait)
+
+    return formatted_price
+
+
+
+
+
 
 

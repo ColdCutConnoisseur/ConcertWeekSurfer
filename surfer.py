@@ -81,11 +81,8 @@ def create_and_return_driver(driver_type: DriverType) -> webdriver:
 
 def visit_cw_home_page(driver: webdriver):
     concert_week_home_url = "https://www.livenation.com/promotion/tickettosummer?locationmode=default-all"
-
     driver.get(concert_week_home_url)
-
     time.sleep(5)
-
     return 0
 
 def check_current_prices(use_driver_type: DriverType):
@@ -116,11 +113,13 @@ def check_current_prices(use_driver_type: DriverType):
             try:
                 if website == "ticketmaster":
                     min_price = run_ticketmaster_min_price_check(driver, event_url)
+                    # DEBUG
                     print(min_price)
                     visit_cw_home_page(driver)
 
                 elif website == "livenation":
                     min_price = run_livenation_min_price_check(driver, event_url)
+                    # DEBUG
                     print(min_price)
                     visit_cw_home_page(driver)
 
