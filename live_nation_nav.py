@@ -7,7 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-from utils import price_cleanup
+from utils import price_cleanup, retry_call_until_text_is_avail
 
 
 def run_livenation_min_price_check(driver: webdriver, url_to_visit: str) -> float:
@@ -19,19 +19,20 @@ def run_livenation_min_price_check(driver: webdriver, url_to_visit: str) -> floa
 
     print("Successfully visited page.")
 
-    # Functionality for checking if popup exists
-    # NOTE: Maybe this can be skipped altogether
-
     # Find the ticket box element
     box_element = test_wait.until(EC.presence_of_element_located((By.ID, "quickpicks-listings")))
 
     print("Box element located.")
 
-    # Now grab first element of this ticket box - NOTE: Should be cheapest, but this should also be asserted (when you have time)
-    first_li = box_element.find_element(By.CSS_SELECTOR, "ul > li")
+    # Now grab second element of this ticket box - NOTE: Should be cheapest, but this should also be asserted (when you have time)
+    # First <li> is a header row or something of the sort
+    second_li = box_element.find_element(By.CSS_SELECTOR, "ul > li:nth-of-type(2)")
 
-    # Then grab the data-price attribute of the first <li> element
-    raw_price = first_li.get_attribute('data-price')
+    # Then grab the data-price attribute of the second <li> element
+    raw_price = second_li.get_attribute('data-price')
+
+    if raw_price is None:
+        raw_price = retry_call_until_text_is_avail(second_li, grab_attrib=True, attrib_tag="data-price")
 
     formatted_price = price_cleanup(raw_price)
 

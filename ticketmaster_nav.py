@@ -12,29 +12,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from utils import price_cleanup, alert_user, retry_call_until_text_is_avail
 
 
-def retry_call_until_text_is_avail(element, grab_attrib=False, attrib_tag=None):
-    # TODO:  This can be replaced with something way cleaner; I'm just trying to get this workflow going at this point
-    max_retries = 10
-    timeout = 2
-    retries = 0
-
-    while True:
-        if retries >= max_retries:
-            print("Max timeout hit.")
-            return None
-
-        time.sleep(timeout)
-
-        if grab_attrib:
-            fetched = element.get_attribute(attrib_tag)
-
-        else:
-            fetched = element.text.strip()
-
-        if fetched is not None:
-            return fetched
-
-        retries += 1
 
 def run_subtotal_logic_for_price(driver: webdriver, url: str, wait_object: WebDriverWait):
     # NOTE: Let's run two checks and they both have to pass

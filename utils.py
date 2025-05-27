@@ -2,7 +2,33 @@
 
 from selenium.webdriver.support.ui import WebDriverWait
 
-def wait_for_nonempty_text(driver, element, timeout=10):
+
+
+def retry_call_until_text_is_avail(element, grab_attrib=False, attrib_tag=None):
+    # TODO:  This can be replaced with something way cleaner; I'm just trying to get this workflow going at this point
+    max_retries = 10
+    timeout = 2
+    retries = 0
+
+    while True:
+        if retries >= max_retries:
+            print("Max timeout hit.")
+            return None
+
+        time.sleep(timeout)
+
+        if grab_attrib:
+            fetched = element.get_attribute(attrib_tag)
+
+        else:
+            fetched = element.text.strip()
+
+        if fetched is not None:
+            return fetched
+
+        retries += 1
+
+def DEPRwait_for_nonempty_text(driver, element, timeout=10):
     """
     Waits until an element's .text or .textContent is non-empty.
     Returns the resolved text once available.
