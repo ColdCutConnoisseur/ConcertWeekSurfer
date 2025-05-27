@@ -84,7 +84,7 @@ def visit_cw_home_page(driver: webdriver):
 
     driver.get(concert_week_home_url)
 
-    time.sleep(20)
+    time.sleep(5)
 
     return 0
 

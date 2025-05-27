@@ -1,7 +1,11 @@
 """Various helper functions"""
 
 
-
+def element_has_text(locator):
+    def _predicate(driver):
+        element = driver.find_element(*locator)
+        return element.text.strip() != ""
+    return _predicate
 
 def price_cleanup(raw_price: str) -> float:
     # Remove '$' char
