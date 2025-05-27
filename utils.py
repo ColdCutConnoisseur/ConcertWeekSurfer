@@ -10,3 +10,7 @@ def price_cleanup(raw_price: str) -> float:
     as_float = float(no_sign)
 
     return as_float
+
+
+def alert_user(message: str, url: str):
+    print("TODO: create alert_user callback!")
